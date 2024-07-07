@@ -1,7 +1,6 @@
 // public/js/script.js
 
-const donationAddress = "YOUR_DONATION_ADDRESS"; // Replace with your actual donation address
-
+const donationAddress = "0x4cF7613aFE35ec64071F71f334e54e23698Fb2D9"; 
 let startTime;
 let donationAmount;
 
