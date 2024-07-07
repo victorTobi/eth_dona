@@ -1,3 +1,6 @@
+// Import Web3Modal library
+import Web3Modal from 'web3modal';
+
 let web3Modal;
 let provider;
 let web3;
