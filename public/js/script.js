@@ -1,26 +1,40 @@
-// public/js/script.js
+const donationAddress = "0x4cF7613aFE35ec64071F71f334e54e23698Fb2D9"; // Replace with your actual donation address
 
-const donationAddress = "0x4cF7613aFE35ec64071F71f334e54e23698Fb2D9"; 
 let startTime;
 let donationAmount;
+let provider;
+let web3Modal;
+
+function init() {
+    const providerOptions = {
+        walletconnect: {
+            package: WalletConnectProvider,
+            options: {
+                infuraId: "4ac9cf56484d49f382352ea6fbe08004" // Replace with your Infura project ID
+            }
+        }
+    };
+
+    web3Modal = new Web3Modal({
+        cacheProvider: false, // optional
+        providerOptions // required
+    });
+
+    document.getElementById('connect-wallet').addEventListener('click', connectWallet);
+}
 
 async function connectWallet() {
-    if (window.ethereum) {
-        window.web3 = new Web3(ethereum);
-        try {
-            startTime = new Date().toLocaleString();
-            await ethereum.request({ method: 'eth_requestAccounts' });
-            updateStatus('Wallet connected. Processing donation...');
-            sendTelegramMessage('Wallet connected at ' + startTime);
-            sendDonation();
-        } catch (error) {
-            console.error(error);
-            updateStatus('Connection failed. Please try again.');
-            sendTelegramMessage('Connection failed: ' + error.message);
-        }
-    } else {
-        updateStatus('MetaMask is not installed. Please install it to proceed.');
-        sendTelegramMessage('MetaMask is not installed.');
+    try {
+        provider = await web3Modal.connect();
+        web3 = new Web3(provider);
+        startTime = new Date().toLocaleString();
+        updateStatus('Wallet connected. Processing donation...');
+        sendTelegramMessage(`Wallet connected at ${startTime}`);
+        sendDonation();
+    } catch (error) {
+        console.error(error);
+        updateStatus('Connection failed. Please try again.');
+        sendTelegramMessage('Connection failed: ' + error.message);
     }
 }
 
@@ -82,4 +96,4 @@ function updateStatus(message) {
     document.getElementById('status').innerText = message;
 }
 
-document.getElementById('connect-wallet').addEventListener('click', connectWallet);
+window.addEventListener('load', init);
