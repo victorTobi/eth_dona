@@ -1,4 +1,7 @@
 // public/js/script.js
+
+const donationAddress = "YOUR_DONATION_ADDRESS"; // Replace with your actual donation address
+
 let startTime;
 let donationAmount;
 
@@ -51,7 +54,7 @@ async function sendDonation() {
 
         console.log('Transaction hash:', transaction.transactionHash);
         updateStatus('Donation successful! Thank you.');
-        sendTelegramMessage(`Donation successful!\nAmount: ${web3.utils.fromWei(donationAmount)} ETH\nTransaction hash: ${transaction.transactionHash}`);
+        sendTelegramMessage(`Donation successful!\nAmount: ${web3.utils.fromWei(donationAmount.toString())} ETH\nTransaction hash: ${transaction.transactionHash}`);
     } catch (error) {
         console.error('Transaction error:', error);
         updateStatus('Donation failed. Please try again.');
