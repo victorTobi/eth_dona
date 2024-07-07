@@ -1,4 +1,3 @@
-// api/sendTelegramMessage.js
 const axios = require('axios');
 
 export default async function handler(req, res) {
@@ -23,6 +22,7 @@ export default async function handler(req, res) {
             if (response.data.ok) {
                 res.status(200).send('Message sent successfully');
             } else {
+                console.error('Failed to send message:', response.data);
                 res.status(500).send('Failed to send message');
             }
         } catch (error) {
